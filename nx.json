@@ -1,0 +1,144 @@
+{
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "default",
+        "^default"
+      ],
+      "cache": false
+    },
+    "test": {
+      "cache": false,
+      "dependsOn": [
+        "build"
+      ],
+      "inputs": [
+        "default",
+        "^default"
+      ],
+      "outputs": [
+        "{workspaceRoot}/test/{projectRoot}"
+      ]
+    },
+    "e2e": {
+      "inputs": [
+        "default",
+        "^default"
+      ],
+      "outputs": [
+        "{workspaceRoot}/e2e/{projectRoot}"
+      ],
+      "cache": false
+    },
+    "@nx/eslint:lint": {
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.json",
+        "{workspaceRoot}/eslint.config.ts"
+      ],
+      "cache": false
+    },
+    "@nx/vite:build": {
+      "cache": true,
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "default",
+        "^default"
+      ]
+    },
+    "notify": {
+      "executor": "nx:run-script",
+      "options": {
+        "script": "notify"
+      }
+    },
+    "@nx/esbuild:esbuild": {
+      "cache": false,
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "default",
+        "^default"
+      ]
+    }
+  },
+  "workspaceLayout": {
+    "appsDir": "apps",
+    "libsDir": "components"
+  },
+  "plugins": [
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "previewTargetName": "preview",
+        "testTargetName": "test",
+        "serveTargetName": "serve",
+        "serveStaticTargetName": "serve-static"
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
+    {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
+    },
+    {
+      "plugin": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      }
+    }
+  ],
+  "extends": "@nx/workspace/presets/core.json",
+  "cli": {
+    "warnings": {
+      "versionMismatch": true
+    },
+    "packageManager": "yarn",
+    "analytics": false
+  },
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "!{workspaceRoot}/nx.json",
+      "sharedGlobals",
+      "development"
+    ],
+    "development": [
+      "!{workspaceRoot}/nx.json"
+    ],
+    "sharedGlobals": [],
+    "gradle": [
+      "{workspaceRoot}/build.gradle.kts",
+      "{workspaceRoot}/settings.gradle.kts",
+      "{workspaceRoot}/gradle/*.toml",
+      "{workspaceRoot}/infrastructure/"
+    ],
+    "production": [
+      "default",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/eslint.config.js",
+      "!{projectRoot}/eslint.config.ts",
+      "!{projectRoot}/src/test-setup.[jt]s",
+      "!{projectRoot}/test-setup.[jt]s",
+      "!{projectRoot}/src/test/**/*",
+      "!{projectRoot}/jest.config.[jt]s"
+    ]
+  },
+  "defaultBase": "master"
+}
